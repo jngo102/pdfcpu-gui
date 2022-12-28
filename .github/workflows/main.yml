@@ -44,13 +44,13 @@ jobs:
           build-platform: ${{ matrix.build.platform }}
       - name: Compress binary to archive
         run: |
-          mkdir pdfcpu-gui && mv ./build/bin/${{ matrix.build.name }} ./pdfcpu-gui && tar -cJvf pdfcpu-gui.tar.xz ./pdfcpu-gui/${{ matrix.build.name }}
+          mkdir pdfcpu-gui && mv ./build/bin/${{ matrix.build.name }} ./pdfcpu-gui && tar -zcvf pdfcpu-gui.tar.gz ./pdfcpu-gui/${{ matrix.build.name }}
       - name: Publish archive
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           asset_content_type: application/zip
-          asset_name: pdfcpu-gui-${{ runner.os }}.tar.xz
-          asset_path: ./pdfcpu-gui.tar.xz
+          asset_name: pdfcpu-gui-${{ runner.os }}.tar.gz
+          asset_path: ./pdfcpu-gui.tar.gz
           upload_url: ${{ needs.create-release.outputs.RELEASE_UPLOAD_URL }}
