@@ -45,11 +45,11 @@ jobs:
       - name: Compress binary to archive
         if: runner.os != 'macOS'
         run: |
-          mkdir pdfcpu-gui && mv ./build/bin/${{ matrix.build.name }} ./pdfcpu-gui && tar -zcvf pdfcpu-gui.tar.gz ./pdfcpu-gui/${{ matrix.build.name }}
+          mkdir pdfcpu-gui && cp ./build/bin/${{ matrix.build.name }} ./pdfcpu-gui && tar -zcvf pdfcpu-gui.tar.gz ./pdfcpu-gui/${{ matrix.build.name }}
       - name: Compress binary to archive (macOS)
         if: runner.os == 'macOS'
         run: |
-          mkdir pdfcpu-gui && mv -r ./build/bin/${{ matrix.build.name }}.app ./pdfcpu-gui && tar -zcvf pdfcpu-gui.tar.gz ./pdfcpu-gui/${{ matrix.build.name }}.app
+          mkdir pdfcpu-gui && cp -r ./build/bin/${{ matrix.build.name }}.app ./pdfcpu-gui && tar -zcvf pdfcpu-gui.tar.gz ./pdfcpu-gui/${{ matrix.build.name }}.app
       - name: Publish archive
         uses: actions/upload-release-asset@v1
         env:
