@@ -51,5 +51,5 @@ jobs:
         with:
           asset_content_type: application/zip
           asset_name: pdfcpu-gui-${{ runner.os }}.tar.xz
-          asset_path: ./build/bin/pdfcpu-gui.tar.xz
+          asset_path: ./pdfcpu-gui.tar.xz
           upload_url: ${{ needs.create-release.outputs.RELEASE_UPLOAD_URL }}
