@@ -5,14 +5,11 @@ jobs:
   create-release:
         runs-on: ubuntu-latest
         outputs:
-            RELEASE_UPLOAD_ID: ${{ steps.create_release.outputs.id }}
+            RELEASE_UPLOAD_URL: ${{ steps.create_release.outputs.id.upload_url }}
 
         steps:
-            - name: Get date format for release tag
-              id: date
-              run: echo "today=$(date +'%d.%m.%Y')" >> $GITHUB_OUTPUT
             - uses: actions/checkout@v3
-            - name: Get version
+            - name: Get app version
               run: echo "APP_VERSION=$(node -p "require('./frontend/package.json').version")" >> $GITHUB_ENV
             - name: Create release
               id: create_release
@@ -26,13 +23,14 @@ jobs:
                   draft: false
                   prerelease: true
   build-wails:
+    needs: create-release
     strategy:
       fail-fast: false
       matrix:
         build: [
           { name: pdfcpu-gui, os: ubuntu-latest, platform: linux/amd64 },
-          { name: pdfcpu-gui.app, os: macos-latest, platform: darwin/universal },
-          { name: pdfcpu-gui.exe, os: windows-latest, platform: windows/amd64 },
+          { name: pdfcpu-gui, os: macos-latest, platform: darwin/universal },
+          { name: pdfcpu-gui, os: windows-latest, platform: windows/amd64 },
         ]
     runs-on: ${{ matrix.build.os }}
     steps:
@@ -42,8 +40,12 @@ jobs:
         with:
           build-name: ${{ matrix.build.name }}
           build-platform: ${{ matrix.build.platform }}
-      - name: Upload binaries
-        uses: actions/upload-artifact@v3
+      - name: Publish binaries
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          name: ${{ matrix.build.name }}
-          path: ./build/bin/${{ matrix.build.name }}
+          asset_content_type: application/octet-stream
+          asset_name: ${{ matrix.build.name }}
+          asset_path: ./build/bin/${{ matrix.build.name }}
+          upload_url: ${{ needs.create-release.outputs.RELEASE_UPLOAD_URL }}
