@@ -1,0 +1,13 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "pdfcpu-gui",
+  "outputfilename": "pdfcpu-gui",
+  "frontend:install": "npm install",
+  "frontend:build": "npm run build",
+  "frontend:dev:watcher": "npm run dev",
+  "frontend:dev:serverUrl": "auto",
+  "author": {
+    "name": "Jason Ngo",
+    "email": "jngo102@aim.com"
+  }
+}
