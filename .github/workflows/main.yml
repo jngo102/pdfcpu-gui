@@ -7,12 +7,16 @@ jobs:
       fail-fast: false
       matrix:
         build: [
-          {name: pdfcpu-gui, os: ubuntu-latest, platform: linux/amd64},
-          {name: pdfcpu-gui.app, os: macos-latest, platform: darwin/universal},
-          {name: pdfcpu-gui.exe, os: windows-latest, platform: windows/amd64},
+          { name: pdfcpu-gui, os: ubuntu-latest, platform: linux/amd64 },
+          { name: pdfcpu-gui, os: macos-latest, platform: darwin/universal },
+          { name: pdfcpu-gui, os: windows-latest, platform: windows/amd64 },
         ]
     runs-on: ${{ matrix.build.os }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
       - name: Wails Build Action
         uses: dAppServer/wails-build-action@v2
         with:
