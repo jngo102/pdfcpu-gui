@@ -44,7 +44,7 @@ jobs:
           build-platform: ${{ matrix.build.platform }}
       - name: Compress binary to archive
         run: |
-          mkdir pdfcpu && mv ./build/bin/${{ matrix.build.name }} ./pdfcpu && tar -cJvf pdfcpu-gui.tar.xz ./${{ matrix.build.name }}
+          mkdir pdfcpu-gui && mv ./build/bin/${{ matrix.build.name }} ./pdfcpu-gui && tar -cJvf pdfcpu-gui.tar.xz ./pdfcpu-gui/${{ matrix.build.name }}
       - name: Publish archive
         uses: actions/upload-release-asset@v1
         env:
