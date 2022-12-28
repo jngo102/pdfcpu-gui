@@ -8,7 +8,8 @@ jobs:
             RELEASE_UPLOAD_URL: ${{ steps.create_release.outputs.upload_url }}
 
         steps:
-            - uses: actions/checkout@v3
+            - name: Checkout
+              uses: actions/checkout@v3
             - name: Get app version
               run: echo "APP_VERSION=$(node -p "require('./frontend/package.json').version")" >> $GITHUB_ENV
             - name: Create release
@@ -29,34 +30,26 @@ jobs:
       matrix:
         build: [
           { name: pdfcpu-gui, os: ubuntu-latest, platform: linux/amd64 },
-          { name: pdfcpu-gui, os: macos-latest, platform: darwin/universal },
+          { name: pdfcpu-gui.app, os: macos-latest, platform: darwin/universal },
           { name: pdfcpu-gui.exe, os: windows-latest, platform: windows/amd64 },
         ]
     runs-on: ${{ matrix.build.os }}
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
       - name: Wails build action
         uses: dAppServer/wails-build-action@v2
         with:
           build-name: ${{ matrix.build.name }}
           build-platform: ${{ matrix.build.platform }}
-      - name: Publish binary
-        if: runner.os != 'macOS'
+      - name: Compress binary to archive
+        run: tar -zcvf pdfcpu-gui.tar.xz ./build/bin/${{ matrix.build.name }}
+      - name: Publish archive
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          asset_content_type: application/octet-stream
-          asset_name: ${{ matrix.build.name }}
-          asset_path: ./build/bin/${{ matrix.build.name }}
-          upload_url: ${{ needs.create-release.outputs.RELEASE_UPLOAD_URL }}
-      - name: Publish binary (macOS)
-        if: runner.os == 'macOS'
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          asset_content_type: application/octet-stream
-          asset_name: ${{ matrix.build.name }}
-          asset_path: ./build/bin/${{ matrix.build.name }}.app/Contents/MacOS/${{ matrix.build.name }}
+          asset_content_type: application/zip
+          asset_name: pdfcpu-gui-${{ runner.os }}.tar.xz
+          asset_path: ./build/bin/pdfcpu-gui.tar.xz
           upload_url: ${{ needs.create-release.outputs.RELEASE_UPLOAD_URL }}
