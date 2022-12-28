@@ -30,7 +30,7 @@ jobs:
         build: [
           { name: pdfcpu-gui, os: ubuntu-latest, platform: linux/amd64 },
           { name: pdfcpu-gui, os: macos-latest, platform: darwin/universal },
-          { name: pdfcpu-gui, os: windows-latest, platform: windows/amd64 },
+          { name: pdfcpu-gui.exe, os: windows-latest, platform: windows/amd64 },
         ]
     runs-on: ${{ matrix.build.os }}
     steps:
@@ -40,7 +40,8 @@ jobs:
         with:
           build-name: ${{ matrix.build.name }}
           build-platform: ${{ matrix.build.platform }}
-      - name: Publish binaries
+      - name: Publish binary
+        if: runner.os != 'macOS'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -48,4 +49,14 @@ jobs:
           asset_content_type: application/octet-stream
           asset_name: ${{ matrix.build.name }}
           asset_path: ./build/bin/${{ matrix.build.name }}
+          upload_url: ${{ needs.create-release.outputs.RELEASE_UPLOAD_URL }}
+      - name: Publish binary (macOS)
+        if: runner.os == 'macOS'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          asset_content_type: application/octet-stream
+          asset_name: ${{ matrix.build.name }}
+          asset_path: ./build/bin/${{ matrix.build.name }}.app/Contents/MacOS/${{ matrix.build.name }}
           upload_url: ${{ needs.create-release.outputs.RELEASE_UPLOAD_URL }}
