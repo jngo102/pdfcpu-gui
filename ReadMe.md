@@ -15,4 +15,4 @@
 </p>
 
 ## About
-This is a GUI for [pdfcpu, a PDF processor written in Go](https://pdfcpu.io) written using [Wails](https://wails.io). It serves mainly as a playground for me to learn the [Go programming language](https://go.dev).
+This is a GUI for [pdfcpu, a PDF processor written in Go](https://pdfcpu.io), using [Wails](https://wails.io). It serves mainly as a playground for me to learn the [Go programming language](https://go.dev).

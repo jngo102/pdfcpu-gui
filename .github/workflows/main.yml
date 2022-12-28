@@ -7,14 +7,14 @@ jobs:
       fail-fast: false
       matrix:
         build: [
-          {platform: linux/amd64, os: ubuntu-latest},
-          {platform: darwin/universal, os: macos-latest},
-          {platform: windows/amd64, os: windows-latest},
+          {name: pdfcpu-gui, os: ubuntu-latest, platform: linux/amd64},
+          {name: pdfcpu-gui.app, os: macos-latest, platform: darwin/universal},
+          {name: pdfcpu-gui.exe, os: windows-latest, platform: windows/amd64},
         ]
     runs-on: ${{ matrix.build.os }}
     steps:
       - name: Wails Build Action
         uses: dAppServer/wails-build-action@v2
         with:
-          build-name: pdfcpu-gui
+          build-name: ${{ matrix.build.name }}
           build-platform: ${{ matrix.build.platform }}
