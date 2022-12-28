@@ -30,7 +30,7 @@ jobs:
       matrix:
         build: [
           { name: pdfcpu-gui, os: ubuntu-latest, platform: linux/amd64 },
-          { name: pdfcpu-gui.app, os: macos-latest, platform: darwin/universal },
+          { name: pdfcpu-gui, os: macos-latest, platform: darwin/universal },
           { name: pdfcpu-gui.exe, os: windows-latest, platform: windows/amd64 },
         ]
     runs-on: ${{ matrix.build.os }}
@@ -43,8 +43,13 @@ jobs:
           build-name: ${{ matrix.build.name }}
           build-platform: ${{ matrix.build.platform }}
       - name: Compress binary to archive
+        if: runner.os != 'macOS'
         run: |
           mkdir pdfcpu-gui && mv ./build/bin/${{ matrix.build.name }} ./pdfcpu-gui && tar -zcvf pdfcpu-gui.tar.gz ./pdfcpu-gui/${{ matrix.build.name }}
+      - name: Compress binary to archive (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          mkdir pdfcpu-gui && mv -r ./build/bin/${{ matrix.build.name }}.app ./pdfcpu-gui && tar -zcvf pdfcpu-gui.tar.gz ./pdfcpu-gui/${{ matrix.build.name }}.app
       - name: Publish archive
         uses: actions/upload-release-asset@v1
         env:
