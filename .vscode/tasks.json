@@ -2,20 +2,20 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "dev",
+            "type": "shell",
+            "command": "wails",
+            "args": [
+                "dev"
+            ]
+        },
+        {
             "label": "build",
             "type": "shell",
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "command": "go",
+            "command": "wails",
             "args": [
                 "build",
-                "-tags",
-                "dev",
-                "-gcflags",
-                "all=-N -l",
-                "-o",
-                "build/bin/pdfcpu-gui"
+                "-nsis"
             ]
         }
     ]

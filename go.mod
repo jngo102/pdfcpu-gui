@@ -1,4 +1,4 @@
-module changeme
+module pdfcpu-gui
 
 go 1.18
 

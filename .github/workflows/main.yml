@@ -42,15 +42,16 @@ jobs:
         with:
           build-name: ${{ matrix.build.name }}
           build-platform: ${{ matrix.build.platform }}
-      - name: Compress binary to archive
-        if: runner.os != 'macOS'
+      - name: Compress binary to archive (Linux)
+        if: runner.os == 'Linux'
         run: |
           mkdir pdfcpu-gui && cp ./build/bin/${{ matrix.build.name }} ./pdfcpu-gui && tar -zcvf pdfcpu-gui.tar.gz ./pdfcpu-gui/${{ matrix.build.name }}
       - name: Compress binary to archive (macOS)
         if: runner.os == 'macOS'
         run: |
           mkdir pdfcpu-gui && cp -r ./build/bin/${{ matrix.build.name }}.app ./pdfcpu-gui && tar -zcvf pdfcpu-gui.tar.gz ./pdfcpu-gui/${{ matrix.build.name }}.app
-      - name: Publish archive
+      - name: Publish archive (Unix)
+        if: runner.os != 'Windows'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -58,4 +59,14 @@ jobs:
           asset_content_type: application/zip
           asset_name: pdfcpu-gui-${{ runner.os }}.tar.gz
           asset_path: ./pdfcpu-gui.tar.gz
+          upload_url: ${{ needs.create-release.outputs.RELEASE_UPLOAD_URL }}
+      - name: Publish installer (Windows)
+        if : runner.os == 'Windows'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          asset_content_type: application/octet-stream
+          asset_name: pdfcpu-gui-amd64-installer.exe
+          asset_path: ./build/bin/pdfcpu-gui-amd64-installer.exe
           upload_url: ${{ needs.create-release.outputs.RELEASE_UPLOAD_URL }}
